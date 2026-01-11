@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"  >
+        <title>SRMS-STUDENT LOGIN</title>
+        <meta name="viewerport" content="width=device-width,inititial-scale=1" />
+        <link rel="stylesheet" href="student-login.css" />
+    </head>
+    <body>
+        <div class="page-wrapper">
+            <header class="header">
+                <div class="logo-icon">S</div>
+                <div class="loo-text">
+                    <div class="logo-title">SRMS</div>
+                    <div class="logo-subtitle">STUDENT REGISTRATION &amp; ACADEMIC MANAGEMENT SYSTEM</div>
+                </div>
+            </header>
+            <main class="main">
+                <section class="card" aria-label="student login form">
+                    <a href="/" class="back-link"><span>&larr;</span> Back to Home</a>
+
+                    <div class="card-header">
+                        <h1 class="card-title">STUDENT LOGIN</h1>
+                        <p class="card-subtitle">Access your academic dashboard, results, and attendance.</p>
+                    </div>
+
+                    <div class="entry-toggle" role="tablist" aria-label="Student entry options">
+                        <button type="button" class="toggle-btn active" data-target="login">Already registered? Login</button>
+                        <button type="button" class="toggle-btn" data-target="register">New student? Register</button>
+                    </div>
+
+                    <div id="register-panel" class="register-panel" hidden>
+                        <p>New to SRMS? Create your student account to access results, attendance, and the dashboard.</p>
+                        <a href="student-register.html" class="btn-secondary" role="link">Proceed to Register</a>
+                    </div>
+
+                    <form id="login-form" novalidate>
+                        <div class="form-group">
+                            <label for="studentId" class="form-label">Student ID</label>
+                            <div class="input-wrapper">
+                                <input id="studentId" name="studentId" type="text" class="input-field" placeholder="Enter your student ID" autocomplete="username" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-wrapper">
+                                <input id="password" name="password" type="password" class="input-field" placeholder="Enter your password" autocomplete="current-password" required />
+                                <button type="button" class="input-eye" aria-label="Show password" title="Show password">👁️</button>
+                            </div>
+                        </div>
+
+                        <div class="helper-row">
+                            <a href="/forgot-password">Forgot your password?</a>
+                        </div>
+
+                        <div class="helper-row" style="margin-top:0.6rem;">
+                            <button type="submit" class="btn-primary">Sign In</button>
+                        </div>
+
+                        <div class="demo-section" style="margin-top:1rem; text-align:center;">
+                            Demo: ID <code>2025-04-12223</code> — password <code>1234</code>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // toggle between login and register panels
+                const toggleBtns = document.querySelectorAll('.toggle-btn');
+                const registerPanel = document.getElementById('register-panel');
+                const loginForm = document.getElementById('login-form');
+
+                function setActive(target) {
+                    toggleBtns.forEach(b => b.classList.toggle('active', b.dataset.target === target));
+                    if (target === 'register') {
+                        registerPanel.hidden = false;
+                        loginForm.hidden = true;
+                    } else {
+                        registerPanel.hidden = true;
+                        loginForm.hidden = false;
+                    }
+                }
+                toggleBtns.forEach(btn => btn.addEventListener('click', () => setActive(btn.dataset.target)));
+                setActive('login');
+
+                // password visibility toggle
+                const pwd = document.getElementById('password');
+                const eyeBtn = document.querySelector('.input-eye');
+                if (pwd && eyeBtn) {
+                    function updateEye() {
+                        const hidden = pwd.type === 'password';
+                        eyeBtn.textContent = hidden ? '👁️' : '🙈';
+                        eyeBtn.setAttribute('aria-label', hidden ? 'Show password' : 'Hide password');
+                        eyeBtn.title = hidden ? 'Show password' : 'Hide password';
+                    }
+                    eyeBtn.addEventListener('click', () => {
+                        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+                        updateEye();
+                        pwd.focus();
+                    });
+                    updateEye();
+                }
+
+                // burst effect on Sign In (keeps form submit after short delay)
+                const signBtn = document.querySelector('#login-form .btn-primary');
+                const form = document.getElementById('login-form');
+                if (signBtn) {
+                    function createBurst(btn, count = 12) {
+                        const colors = ['#FFD166','#FF6B6B','#9b5de5','#06b6d4','#ffffff','#A3E635'];
+                        for (let i = 0; i < count; i++) {
+                            const p = document.createElement('span');
+                            p.className = 'particle';
+                            const angle = (Math.PI * 2) * (i / count) + (Math.random() - 0.5) * 0.6;
+                            const dist = 30 + Math.random() * 60;
+                            const dx = Math.cos(angle) * dist;
+                            const dy = Math.sin(angle) * dist;
+                            p.style.setProperty('--dx', dx.toFixed(2) + 'px');
+                            p.style.setProperty('--dy', dy.toFixed(2) + 'px');
+                            p.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+                            btn.appendChild(p);
+                            p.addEventListener('animationend', () => p.remove());
+                        }
+                    }
+
+                    signBtn.addEventListener('click', (e) => {
+                        createBurst(signBtn, 12);
+                        if (form && signBtn.type === 'submit') {
+                            e.preventDefault();
+                            signBtn.disabled = true;
+                            setTimeout(() => form.submit(), 350);
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
